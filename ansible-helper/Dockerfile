@@ -25,9 +25,6 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
     poetry --version
 
-COPY ./pyproject.toml ./poetry.lock /tmp/
-RUN cd /tmp && poetry install --no-root --no-interaction --no-ansi
-
 RUN curl -sLo /tmp/tfenv.tar.gz "https://github.com/tfutils/tfenv/archive/refs/tags/v${TFENV_VERSION}.tar.gz" \
     && tar -C /tmp -xf /tmp/tfenv.tar.gz \
     && mv "/tmp/tfenv-${TFENV_VERSION}/bin"/* /usr/local/bin/ \
@@ -43,3 +40,6 @@ ENV TFENV_CONFIG_DIR=/var/tfenv
 VOLUME /var/tfenv
 
 USER circleci
+
+COPY ./pyproject.toml ./poetry.lock /tmp/
+RUN cd /tmp && poetry install --no-root --no-interaction --no-ansi && pyenv rehash
